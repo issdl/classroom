@@ -1,3 +1,3 @@
 #!/bin/bash -x
 
-docker run -p 8000:8000 -ti issdl/classroom conda env export --name base > environment.yml
+docker run -v $(pwd):/opt/core/:ro -v /opt/data:/opt/data:ro -v /opt/classes:/opt/classes:ro -ti issdl/classroom conda env export --name base > environment.yml

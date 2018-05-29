@@ -27,7 +27,7 @@ RUN conda install -y tensorflow
 
 ########## USERS ##########
 RUN mkdir -p /opt/data
-RUN PASSWORD=test; NUMBER_OF_USERS=10; for n in `seq -f "%02g" 1 $NUMBER_OF_USERS`; do echo creating user training$n; echo training$n:$PASSWORD::::/home/training$n:/bin/bash | newusers; ln -s /opt/data/ /home/training$n/data; done;
+RUN PASSWORD=test; NUMBER_OF_USERS=10; for n in `seq -f "%02g" 1 $NUMBER_OF_USERS`; do echo creating user training$n; echo training$n:$PASSWORD::::/home/training$n:/bin/bash | newusers; done;
 
 ########## JUPYTERHUB ##########
 RUN conda install -c conda-forge jupyterhub

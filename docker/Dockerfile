@@ -32,3 +32,8 @@ RUN PASSWORD=test; NUMBER_OF_USERS=10; for n in `seq -f "%02g" 1 $NUMBER_OF_USER
 RUN conda install -c conda-forge jupyterhub
 RUN conda install jupyterhub
 RUN conda install notebook
+
+########## NEON ##########
+RUN apt-get -y install \
+    gcc
+RUN pip install nervananeon

@@ -7,7 +7,7 @@ do
   #cp -R /opt/classes/* /home/training$N/;
   rsync -a --ignore-existing --exclude=data /opt/classes/* /home/training$N/;
   chown -R training$N:training$N /home/training$N;
-  ln -s /opt/data/ /home/training$n/data;
+  ln -s /opt/data/ /home/training$N/data;
 done;
 
 jupyterhub

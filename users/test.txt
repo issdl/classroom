@@ -1,0 +1,10 @@
+training01:test
+training02:test
+training03:test
+training04:test
+training05:test
+training06:test
+training07:test
+training08:test
+training09:test
+training10:test

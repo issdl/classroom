@@ -8,41 +8,46 @@ RUN apt-get -y dist-upgrade
 RUN apt-get -y install \
     bzip2 \
     curl \
+    gcc \
+    git \
+    libjpeg9 \
+    libjpeg62 \
+    libjpeg-dev \
+    libgflags-dev \
+    rsync \
     tmux \
     wget \
-    vim
+    vim \
+    pkg-config zip g++ zlib1g-dev unzip python software-properties-common
 
 RUN mkdir /packages/
-RUN wget https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh -O /packages/anaconda.sh
+
+########## ANACONDA ##########
+COPY packages/ /packages/
 RUN chmod +x /packages/anaconda.sh
 RUN bash /packages/anaconda.sh -b -p /opt/anaconda
-
 ENV PATH /opt/anaconda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
+########## ANACONDA INTEL CHANNEL ##########
 RUN conda update -y conda
 RUN conda config --add channels intel
 RUN conda update -y conda
-RUN conda install -y caffe
-RUN conda install -y tensorflow
 
-########## USERS ##########
-#RUN mkdir -p /opt/data
-#RUN PASSWORD=test; NUMBER_OF_USERS=10; for n in `seq -f "%02g" 1 $NUMBER_OF_USERS`; do echo creating user training$n; echo training$n:$PASSWORD::::/home/training$n:/bin/bash | newusers; done;
+########## TENSORFLOW ##########
+RUN pip install --ignore-installed --upgrade /packages/tensorflow-1.8.0_830fps_-cp36-cp36m-linux_x86_64.whl
+
+########## CAFFE ##########
+RUN conda install -y caffe
 
 ########## JUPYTERHUB ##########
+RUN conda install -y tornado=4.5.3
 RUN conda install -c conda-forge jupyterhub
 RUN conda install jupyterhub
 RUN conda install notebook
 
 ########## NEON ##########
-RUN apt-get -y install \
-    gcc
 RUN pip install nervananeon
 
 ########## CLASSES ##########
-RUN apt-get -y install rsync
 RUN mkdir -p /opt/issdl/
-
-########## FIXES #########
-RUN apt-get -y install libjpeg9 libjpeg62 libjpeg-dev libgflags-dev
 

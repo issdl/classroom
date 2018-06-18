@@ -48,6 +48,12 @@ RUN conda install notebook
 ########## NEON ##########
 RUN pip install nervananeon
 
+########## KERAS ##########
+WORKDIR /packages/
+RUN git clone https://github.com/keras-team/keras.git
+RUN (cd keras && python setup.py install)
+
 ########## CLASSES ##########
 RUN mkdir -p /opt/issdl/
 
+WORKDIR /root/

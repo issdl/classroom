@@ -52,7 +52,10 @@ RUN conda install jupyterhub
 RUN conda install notebook
 
 ########## NEON ##########
-RUN pip install nervananeon
+RUN pip install virtualenv
+RUN git clone https://github.com/NervanaSystems/neon.git /packages/neon/
+WORKDIR /packages/neon/
+RUN make sysinstall
 
 ########## KERAS ##########
 WORKDIR /packages/

@@ -73,4 +73,7 @@ WORKDIR /opt/libraries/ngraph/build
 ########## CLASSES ##########
 RUN mkdir -p /opt/issdl/
 
+########## FIX NUMPY FOR MATPLOTLIB ##########
+RUN pip install -U numpy
+
 WORKDIR /root/

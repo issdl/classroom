@@ -74,7 +74,8 @@ RUN python build_ngtf.py && \
     pip install \
         /packages/ngraph-bridge/build_cmake/artifacts/tensorflow/tensorflow-1.13.1-cp35-cp35m-linux_x86_64.whl \
         /packages/ngraph-bridge/build_cmake/artifacts/ngraph_tensorflow_bridge-0.14.1-py2.py3-none-manylinux1_x86_64.whl && \
-    rm -rf /packages/ngraph-bridge/
+    rm -rf /packages/ngraph-bridge/ && \
+    rm -Rf /root/.cache/bazel/
 WORKDIR /root/
 
 # USER PACKAGES

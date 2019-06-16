@@ -54,11 +54,11 @@ RUN pip install \
     pip==19.1.1 \
     setuptools==41.0.1 \
     mock==3.0.5 \
-    future>=0.17.1 && \
-    \
-    pip install -U --user --no-deps \
-    keras_applications==1.0.6 \
-    keras_preprocessing==1.0.5
+    future>=0.17.1
+
+RUN git clone https://github.com/keras-team/keras.git -b 1.0.6 /packages/keras && \
+    cd /packages/keras && \
+    python setup.py install
 
 # BAZEL
 ADD bazel.sh /packages/bazel.sh

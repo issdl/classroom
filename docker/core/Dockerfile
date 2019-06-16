@@ -32,15 +32,18 @@ RUN apt-get -y install \
     unzip=6.0-20ubuntu1 \
     vim=2:7.4.1689-3ubuntu1.3
 
+RUN mkdir /packages/
+
 # ANACONDA
-ADD anaconda.sh /root/anaconda.sh
-RUN chmod +x /root/anaconda.sh && \
-    bash /root/anaconda.sh -b -p /opt/anaconda && \
-    rm /root/anaconda.sh
+ADD anaconda.sh /packages/anaconda.sh
+RUN chmod +x /packages/anaconda.sh && \
+    bash /packages/anaconda.sh -b -p /opt/anaconda && \
+    rm /packages/anaconda.sh
 ENV PATH /opt/anaconda/bin:$PATH
 RUN conda init bash && \
     conda create -n venv python=3.5 --no-default-packages && \
-    echo "source activate venv" >> ~/.bashrc
+    echo "source activate venv" >> ~/.bashrc && \
+    ln -s /opt/anaconda/envs/venv/bin/python /usr/bin/python
 ENV PATH /opt/anaconda/envs/venv/bin:$PATH
 
 RUN pip install \
@@ -58,23 +61,27 @@ RUN pip install \
     keras_preprocessing==1.0.5
 
 # BAZEL
-ADD bazel.sh /root/bazel.sh
-RUN chmod +x /root/bazel.sh && \
-    /root/bazel.sh --user && \
-    rm /root/bazel.sh
+ADD bazel.sh /packages/bazel.sh
+RUN chmod +x /packages/bazel.sh && \
+    /packages/bazel.sh --user && \
+    rm /packages/bazel.sh
 ENV PATH /root/bin/:$PATH
 
 # NGRAPH / TENSORFLOW
-RUN git clone https://github.com/tensorflow/ngraph-bridge.git -b v0.14.1 /root/ngraph-bridge/
-WORKDIR /root/ngraph-bridge/
-RUN ln -s /opt/anaconda/envs/venv/bin/python /usr/bin/python && \
-    python build_ngtf.py
+RUN git clone https://github.com/tensorflow/ngraph-bridge.git -b v0.14.1 /packages/ngraph-bridge/
+WORKDIR /packages/ngraph-bridge/
+RUN python build_ngtf.py
 RUN pip install \
-    /root/ngraph-bridge/build_cmake/artifacts/tensorflow/tensorflow-1.13.1-cp35-cp35m-linux_x86_64.whl \
-    /root/ngraph-bridge/build_cmake/artifacts/ngraph_tensorflow_bridge-0.14.1-py2.py3-none-manylinux1_x86_64.whl
-WORKDIR /root
+    /packages/ngraph-bridge/build_cmake/artifacts/tensorflow/tensorflow-1.13.1-cp35-cp35m-linux_x86_64.whl \
+    /packages/ngraph-bridge/build_cmake/artifacts/ngraph_tensorflow_bridge-0.14.1-py2.py3-none-manylinux1_x86_64.whl
+WORKDIR /root/
 
 # USER PACKAGES
 RUN pip install \
-    jdc==0.0.8
+    jdc==0.0.8 \
+    jupyter==1.0.0
+
+EXPOSE 8000
+
+CMD ["python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=8000", "--allow-root", "--NotebookApp.token=''"]
 

@@ -6,4 +6,7 @@ RUN npm install -g configurable-http-proxy
 RUN pip install jupyterhub notebook
 
 EXPOSE 8000 9000-9500
-CMD ["python", "-m", "jupyterhub"]
+
+ADD startup.sh /startup.sh
+CMD ["bash", "/startup.sh"]
+

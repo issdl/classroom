@@ -80,7 +80,11 @@ WORKDIR /root/
 # USER PACKAGES
 RUN pip install \
     jdc==0.0.8 \
-    jupyter==1.0.0
+    jupyter==1.0.0 \
+    && \
+    conda install -c pytorch -n venv \
+    pytorch-cpu \
+    torchvision-cpu
 
 EXPOSE 8000
 

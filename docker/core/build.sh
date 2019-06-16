@@ -9,4 +9,4 @@ time docker build --build-arg all_proxy=${all_proxy} \
                   --build-arg https_proxy=${https_proxy} \
                   --build-arg no_proxy=${no_proxy} \
                   --build-arg socks_proxy=${socks_proxy} \
-                  -t issdl/classroom/core:2019 .
+                  -t issdl/core:2019 .

@@ -86,9 +86,10 @@ WORKDIR /root/
 RUN pip install \
     jdc==0.0.8 \
     jupyter==1.0.0 \
+    matplotlib==3.0.3 \
+    tensorflow-datasets==1.0.2 \
     https://download.pytorch.org/whl/cpu/torch-1.1.0-cp35-cp35m-linux_x86_64.whl \
-    https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp35-cp35m-linux_x86_64.whl \
-    matplotlib==3.0.3
+    https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp35-cp35m-linux_x86_64.whl
 RUN conda install \
     opencv==3.4.2
 RUN apt-get -y install \

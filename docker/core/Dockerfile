@@ -68,12 +68,16 @@ RUN chmod +x /packages/bazel.sh && \
 ENV PATH /root/bin/:$PATH
 
 # NGRAPH / TENSORFLOW
-RUN git clone https://github.com/tensorflow/ngraph-bridge.git -b v0.14.1 /packages/ngraph-bridge/
-WORKDIR /packages/ngraph-bridge/
-RUN python build_ngtf.py && \
+RUN git clone https://github.com/NervanaSystems/ngraph.git /root/ngraph/ && \
+    cd /root/ngraph && \
+    git checkout ecd63cfa3feb149ee2e32829642420c6e6fbeb43 && \
+    git clone https://github.com/tensorflow/ngraph-bridge.git -b v0.14.1 /packages/ngraph-bridge/ && \
+    cd /packages/ngraph-bridge/ && \
+    python build_ngtf.py --ngraph_src_dir /root/ngraph/ && \
     pip install \
         /packages/ngraph-bridge/build_cmake/artifacts/tensorflow/tensorflow-1.13.1-cp35-cp35m-linux_x86_64.whl \
         /packages/ngraph-bridge/build_cmake/artifacts/ngraph_tensorflow_bridge-0.14.1-py2.py3-none-manylinux1_x86_64.whl && \
+    rm -rf /packages/ngraph/ && \
     rm -rf /packages/ngraph-bridge/ && \
     rm -Rf /root/.cache/bazel/
 WORKDIR /root/
@@ -87,8 +91,10 @@ RUN pip install \
     matplotlib==3.0.3
 RUN conda install \
     opencv==3.4.2
+RUN apt-get -y install \
+    graphviz
 
 EXPOSE 8000
 
-CMD ["python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=8000", "--allow-root", "--NotebookApp.token=''"]
+CMD ["python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=8000", "--allow-root", "--NotebookApp.token=''"
 

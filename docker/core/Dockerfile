@@ -146,5 +146,5 @@ RUN rm -Rf /root/opencv /root/opencv_contrib /root/*.zip
 WORKDIR /root/
 EXPOSE 8000
 
-CMD ["python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=8000", "--allow-root", "--NotebookApp.token=''"
+CMD ["/usr/bin/python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=8000", "--allow-root", "--NotebookApp.token=''"]
 

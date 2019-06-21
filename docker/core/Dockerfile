@@ -73,7 +73,7 @@ RUN git clone https://github.com/NervanaSystems/ngraph.git /root/ngraph/ && \
     git checkout ecd63cfa3feb149ee2e32829642420c6e6fbeb43 && \
     git clone https://github.com/tensorflow/ngraph-bridge.git -b v0.14.1 /packages/ngraph-bridge/ && \
     cd /packages/ngraph-bridge/ && \
-    python build_ngtf.py --ngraph_src_dir /root/ngraph/ && \
+    python build_ngtf.py --ngraph_src_dir /root/ngraph/ --build_plaidml_backend && \
     pip install \
         /packages/ngraph-bridge/build_cmake/artifacts/tensorflow/tensorflow-1.13.1-cp35-cp35m-linux_x86_64.whl \
         /packages/ngraph-bridge/build_cmake/artifacts/ngraph_tensorflow_bridge-0.14.1-py2.py3-none-manylinux1_x86_64.whl && \
@@ -141,6 +141,14 @@ RUN make -j$(nproc)
 RUN make install && ldconfig
 RUN ln -s /usr/local/python/cv2 /opt/anaconda/envs/venv/lib/python3.5/cv2
 RUN rm -Rf /root/opencv /root/opencv_contrib /root/*.zip
+
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
+RUN pip install \
+    plaidbench==0.6.0 \
+    plaidml==0.6.0 \
+    plaidml-keras==0.6.0
 
 
 WORKDIR /root/

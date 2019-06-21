@@ -90,11 +90,60 @@ RUN pip install \
     tensorflow-datasets==1.0.2 \
     https://download.pytorch.org/whl/cpu/torch-1.1.0-cp35-cp35m-linux_x86_64.whl \
     https://download.pytorch.org/whl/cpu/torchvision-0.3.0-cp35-cp35m-linux_x86_64.whl
-RUN conda install \
-    opencv==3.4.2
 RUN apt-get -y install \
     graphviz
 
+# OPENCV
+WORKDIR /root/
+RUN apt-get -y install \
+    wget
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip
+RUN wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
+RUN unzip opencv.zip
+RUN unzip opencv_contrib.zip
+RUN mv opencv-4.0.0 opencv
+RUN mv opencv_contrib-4.0.0 opencv_contrib
+RUN apt-get install -y \
+    pkg-config \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libv4l-dev \
+    libxvidcore-dev \
+    libx264-dev \
+    libatlas-base-dev\
+    gfortran
+RUN wget https://github.com/facebook/zstd/releases/download/v1.3.7/zstd-1.3.7.tar.gz \
+    && tar xzf zstd-1.3.7.tar.gz \
+    && cd zstd-1.3.7 \
+    && make install \
+    && ldconfig
+RUN mkdir /root/opencv/build
+WORKDIR /root/opencv/build
+RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
+    -D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D OPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib/modules \
+    -D PYTHON3_LIBRARY=/opt/anaconda/envs/venv/lib/libpython3.5m.so \
+    -D PYTHON3_INCLUDE_DIR=/opt/anaconda/envs/venv/include/python3.5m \
+    -D PYTHON3_EXECUTABLE=/opt/anaconda/envs/venv/bin/python \
+    -D PYTHON3_PACKAGES_PATH=/opt/anaconda/envs/venv/lib/python3.5/site-packages \
+    -D BUILD_opencv_python2=OFF \
+    -D BUILD_opencv_python3=ON \
+    -D INSTALL_PYTHON_EXAMPLES=ON \
+    -D INSTALL_C_EXAMPLES=OFF \
+    -D OPENCV_ENABLE_NONFREE=ON \
+    -D BUILD_EXAMPLES=ON ..
+
+RUN make -j$(nproc)
+RUN make install && ldconfig
+RUN ln -s /usr/local/python/cv2 /opt/anaconda/envs/venv/lib/python3.5/cv2
+RUN rm -Rf /root/opencv /root/opencv_contrib /root/*.zip
+
+
+WORKDIR /root/
 EXPOSE 8000
 
 CMD ["python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=8000", "--allow-root", "--NotebookApp.token=''"

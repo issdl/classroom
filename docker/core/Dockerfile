@@ -150,9 +150,12 @@ RUN pip install \
     plaidml==0.6.0 \
     plaidml-keras==0.6.0
 
+# CLEANUP
+RUN rm -Rf /root/ngraph/ /root/opencv/ /root/zstd-1.3.7/ /root/zstd-1.3.7.tar.gz
 
-WORKDIR /root/
-EXPOSE 8000
+RUN mkdir /vol/
+WORKDIR /vol/
+EXPOSE 7000
 
-CMD ["/usr/bin/python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=8000", "--allow-root", "--NotebookApp.token=''"]
+CMD ["/usr/bin/python", "-m", "jupyter", "notebook", "--ip=0.0.0.0", "--port=7000", "--allow-root", "--NotebookApp.token=''"]
 

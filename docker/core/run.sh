@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-docker run --hostname=issdl_classroom_core -p 8000:8000 -ti issdl/core:2019 $@
+mkdir -p vol/ && \
+docker run -v $(pwd)/vol:/vol/ --hostname=issdl_classroom_core -p 7000:7000 -ti issdl/core:2019 $@

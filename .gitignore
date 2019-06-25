@@ -1,6 +1,6 @@
 bazel.sh
 anaconda.sh
-
+vol/
 *.swp
 
 # Byte-compiled / optimized / DLL files

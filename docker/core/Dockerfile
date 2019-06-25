@@ -146,6 +146,7 @@ ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
 RUN pip install \
+    import-ipynb==0.1.3 \
     plaidbench==0.6.0 \
     plaidml==0.6.0 \
     plaidml-keras==0.6.0

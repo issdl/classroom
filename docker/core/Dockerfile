@@ -144,9 +144,12 @@ ENV LANG C.UTF-8
 
 RUN pip install \
     import-ipynb==0.1.3 \
+    imageio==2.5.0 \
+    pandas==0.24.2 \
     plaidbench==0.6.0 \
     plaidml==0.6.0 \
-    plaidml-keras==0.6.0
+    plaidml-keras==0.6.0 \
+    watermark==1.8.1
 
 # CLEANUP
 RUN rm -Rf /root/ngraph/ /root/opencv/ /root/zstd-1.3.7/ /root/zstd-1.3.7.tar.gz

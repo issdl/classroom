@@ -60,21 +60,19 @@ RUN git clone https://github.com/keras-team/keras.git -b 1.0.6 /packages/keras &
     cd /packages/keras && \
     python setup.py install
 
-# BAZEL
+# BAZEL / NGRAPH / TENSORFLOW
 ADD bazel.sh /packages/bazel.sh
+ENV PATH /root/bin/:$PATH
 RUN chmod +x /packages/bazel.sh && \
     /packages/bazel.sh --user && \
-    rm /packages/bazel.sh
-ENV PATH /root/bin/:$PATH
-
-# NGRAPH / TENSORFLOW
-RUN git clone https://github.com/NervanaSystems/ngraph.git /root/ngraph/ && \
+    rm /packages/bazel.sh && \
+    git clone https://github.com/NervanaSystems/ngraph.git /root/ngraph/ && \
     cd /root/ngraph && \
     git checkout ecd63cfa3feb149ee2e32829642420c6e6fbeb43 && \
     git clone https://github.com/tensorflow/ngraph-bridge.git -b v0.14.1 /packages/ngraph-bridge/ && \
     cd /packages/ngraph-bridge/ && \
-    python build_ngtf.py --ngraph_src_dir /root/ngraph/ --build_plaidml_backend
-RUN pip install \
+    python build_ngtf.py --ngraph_src_dir /root/ngraph/ --build_plaidml_backend && \
+    pip install \
         /packages/ngraph-bridge/build_cmake/artifacts/tensorflow/tensorflow-1.13.1-cp37-cp37m-linux_x86_64.whl \
         /packages/ngraph-bridge/build_cmake/artifacts/ngraph_tensorflow_bridge-0.14.1-py2.py3-none-manylinux1_x86_64.whl && \
     rm -rf /packages/ngraph/ && \
@@ -97,47 +95,46 @@ RUN apt-get -y install \
 WORKDIR /root/
 RUN apt-get -y install \
     wget
-RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip
-RUN wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
-RUN unzip opencv.zip
-RUN unzip opencv_contrib.zip
-RUN mv opencv-4.0.0 opencv
-RUN mv opencv_contrib-4.0.0 opencv_contrib
-RUN apt-get install -y \
-    pkg-config \
-    libjpeg-dev \
-    libpng-dev \
-    libtiff-dev \
-    libavcodec-dev \
-    libavformat-dev \
-    libswscale-dev \
-    libv4l-dev \
-    libxvidcore-dev \
-    libx264-dev \
-    libatlas-base-dev\
-    gfortran
-RUN wget https://github.com/facebook/zstd/releases/download/v1.3.7/zstd-1.3.7.tar.gz \
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip \
+    && wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip \
+    && unzip opencv.zip \
+    && unzip opencv_contrib.zip \
+    && mv opencv-4.0.0 opencv \
+    && mv opencv_contrib-4.0.0 opencv_contrib \
+    && apt-get install -y \
+        pkg-config \
+        libjpeg-dev \
+        libpng-dev \
+        libtiff-dev \
+        libavcodec-dev \
+        libavformat-dev \
+        libswscale-dev \
+        libv4l-dev \
+        libxvidcore-dev \
+        libx264-dev \
+        libatlas-base-dev\
+        gfortran \
+    && wget https://github.com/facebook/zstd/releases/download/v1.3.7/zstd-1.3.7.tar.gz \
     && tar xzf zstd-1.3.7.tar.gz \
     && cd zstd-1.3.7 \
     && make install \
-    && ldconfig
-RUN mkdir /root/opencv/build
-WORKDIR /root/opencv/build
-RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
-    -D CMAKE_INSTALL_PREFIX=/usr/local \
-    -D OPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib/modules \
-    -D PYTHON3_LIBRARY=/opt/anaconda/envs/venv/lib/libpython3.7m.so \
-    -D PYTHON3_INCLUDE_DIR=/opt/anaconda/envs/venv/include/python3.7m \
-    -D PYTHON3_EXECUTABLE=/opt/anaconda/envs/venv/bin/python \
-    -D PYTHON3_PACKAGES_PATH=/opt/anaconda/envs/venv/lib/python3.7/site-packages \
-    -D BUILD_opencv_python2=OFF \
-    -D BUILD_opencv_python3=ON \
-    -D INSTALL_PYTHON_EXAMPLES=ON \
-    -D INSTALL_C_EXAMPLES=OFF \
-    -D OPENCV_ENABLE_NONFREE=ON \
-    -D BUILD_EXAMPLES=ON ..
-
-RUN make -j$(nproc) \
+    && ldconfig \
+    &&  mkdir /root/opencv/build \
+    && cd /root/opencv/build \
+    && cmake -D CMAKE_BUILD_TYPE=RELEASE \
+        -D CMAKE_INSTALL_PREFIX=/usr/local \
+        -D OPENCV_EXTRA_MODULES_PATH=/root/opencv_contrib/modules \
+        -D PYTHON3_LIBRARY=/opt/anaconda/envs/venv/lib/libpython3.7m.so \
+        -D PYTHON3_INCLUDE_DIR=/opt/anaconda/envs/venv/include/python3.7m \
+        -D PYTHON3_EXECUTABLE=/opt/anaconda/envs/venv/bin/python \
+        -D PYTHON3_PACKAGES_PATH=/opt/anaconda/envs/venv/lib/python3.7/site-packages \
+        -D BUILD_opencv_python2=OFF \
+        -D BUILD_opencv_python3=ON \
+        -D INSTALL_PYTHON_EXAMPLES=ON \
+        -D INSTALL_C_EXAMPLES=OFF \
+        -D OPENCV_ENABLE_NONFREE=ON \
+        -D BUILD_EXAMPLES=ON .. \
+    && make -j$(nproc) \
     && make install && ldconfig \
     && ln -s /usr/local/python/cv2 /opt/anaconda/envs/venv/lib/python3.7/cv2 \
     && rm -Rf /root/opencv /root/opencv_contrib /root/*.zip

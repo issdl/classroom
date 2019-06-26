@@ -47,21 +47,21 @@ do
   mkdir -p $LEC_PATH;
   chown $SPEAKER:$SPEAKER $LEC_PATH;
 
-  for STUDENT_ACC in $STUDENT_ACCOUNTS;
-  do
-    STUDENT_ACC=`echo $STUDENT_ACC | cut -d':' -f1`;
-    echo "Copying $LEC_PATH to /home/students/$STUDENT_ACC/"
-    cp -R $LEC_PATH /home/students/$STUDENT_ACC/classes/
-    chown -R $STUDENT_ACC:$STUDENT_ACC /home/students/$STUDENT_ACC
-  done;
+#  for STUDENT_ACC in $STUDENT_ACCOUNTS;
+#  do
+#    STUDENT_ACC=`echo $STUDENT_ACC | cut -d':' -f1`;
+#    echo "Copying $LEC_PATH to /home/students/$STUDENT_ACC/"
+#    cp -R $LEC_PATH /home/students/$STUDENT_ACC/classes/
+#    chown -R $STUDENT_ACC:$STUDENT_ACC /home/students/$STUDENT_ACC
+#  done;
 
-  for SPEAKER_ACC in $SPEAKERS_ACCOUNTS;
-  do
-    SPEAKER_ACC=`echo $SPEAKER_ACC | cut -d':' -f1`;
-    echo "Copying $LEC_PATH to /home/speakers/$SPEAKER_ACC/"
-    cp -R $LEC_PATH /home/speakers/$SPEAKER_ACC/classes/
-    chown -R $SPEAKER_ACC:$SPEAKER_ACC /home/speakers/$SPEAKER_ACC/
-  done;
+#  for SPEAKER_ACC in $SPEAKERS_ACCOUNTS;
+#  do
+#    SPEAKER_ACC=`echo $SPEAKER_ACC | cut -d':' -f1`;
+#    echo "Copying $LEC_PATH to /home/speakers/$SPEAKER_ACC/"
+#    cp -R $LEC_PATH /home/speakers/$SPEAKER_ACC/classes/
+#    chown -R $SPEAKER_ACC:$SPEAKER_ACC /home/speakers/$SPEAKER_ACC/
+#  done;
 done;
 
 rm /startup.sh

@@ -19,6 +19,7 @@ do
   mkdir -p $HOME_DIR/classes
   chown -R $USER:$USER $HOME_DIR;
   usermod -a -G students $USER;
+  ln -s /shared/ $HOME_DIR/shared
 done;
 
 # ACCOUNTS - SPEAKERS
@@ -34,6 +35,7 @@ do
   mkdir -p $HOME_DIR/classes
   chown -R $USER:$USER $HOME_DIR;
   usermod -a -G speakers $USER;
+  ln -s /shared/ $HOME_DIR/shared
 done;
 
 # LECTURE DIRECTORIES

@@ -151,6 +151,21 @@ RUN pip install \
     plaidml-keras==0.6.0 \
     watermark==1.8.1
 
+# GRAPH TRANSFORM
+RUN git clone https://github.com/tensorflow/tensorflow.git -b v1.13.1 /opt/tensorflow \
+    && cd /opt/tensorflow/ \
+    && bazel --output_user_root=/opt/bazel_build build tensorflow/tools/graph_transforms:transform_graph \
+    && bazel --output_user_root=/opt/bazel_build build tensorflow/tools/graph_transforms:summarize_graph \
+    && bazel --output_user_root=/opt/bazel_build build tensorflow/tools/benchmark:benchmark_model
+RUN chmod a+r /opt/bazel_build/
+#ENV PATH /opt/tensorflow/bazel-bin/tensorflow/tools/graph_transforms/:/opt/tensorflow/bazel-bin/tensorflow/tools/benchmark/:$PATH
+
+RUN BAZEL_BENCHMARK=`find /opt/bazel_build/ -name benchmark_model | grep "benchmark/benchmark_model$" | grep -v runfiles` \
+    && BAZEL_SUMMARIZE=`find /opt/bazel_build/ -name summarize_graph | head -n1 | sed 's/summarize_graph//g'` \
+    && export L_PATH=$PATH:$BAZEL_BENCHMARK:$BAZEL_SUMMARIZE \
+    && echo export PATH=$L_PATH >> /root/.bashrc \
+    && echo PATH=$L_PATH > /etc/environment
+
 # CLEANUP
 RUN rm -Rf /root/ngraph/ /root/opencv/ /root/zstd-1.3.7/ /root/zstd-1.3.7.tar.gz
 

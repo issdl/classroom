@@ -21,7 +21,7 @@ RUN apt-get -y update && \
     apt-get -y autoremove
 
 RUN apt-get -y install \
-    bzip2=1.0.6-8 \
+    bzip2=1.0.6-8ubuntu0.1 \
     build-essential=12.1ubuntu2 \
     cmake=3.5.1-1ubuntu3 \
     curl=7.47.0-1ubuntu2.13 \
@@ -157,14 +157,16 @@ RUN git clone https://github.com/tensorflow/tensorflow.git -b v1.13.1 /opt/tenso
     && bazel --output_user_root=/opt/bazel_build build tensorflow/tools/graph_transforms:transform_graph \
     && bazel --output_user_root=/opt/bazel_build build tensorflow/tools/graph_transforms:summarize_graph \
     && bazel --output_user_root=/opt/bazel_build build tensorflow/tools/benchmark:benchmark_model
-RUN chmod a+r /opt/bazel_build/
-#ENV PATH /opt/tensorflow/bazel-bin/tensorflow/tools/graph_transforms/:/opt/tensorflow/bazel-bin/tensorflow/tools/benchmark/:$PATH
-
-RUN BAZEL_BENCHMARK=`find /opt/bazel_build/ -name benchmark_model | grep "benchmark/benchmark_model$" | grep -v runfiles` \
+RUN chmod a+r /opt/bazel_build/ \
+    && BAZEL_BENCHMARK=`find /opt/bazel_build/ -name benchmark_model | grep "benchmark/benchmark_model$" | grep -v runfiles | sed 's/benchmark_model//g'` \
     && BAZEL_SUMMARIZE=`find /opt/bazel_build/ -name summarize_graph | head -n1 | sed 's/summarize_graph//g'` \
     && export L_PATH=$PATH:$BAZEL_BENCHMARK:$BAZEL_SUMMARIZE \
     && echo export PATH=$L_PATH >> /root/.bashrc \
     && echo PATH=$L_PATH > /etc/environment
+
+# NETRON
+RUN pip install \
+    netron
 
 # CLEANUP
 RUN rm -Rf /root/ngraph/ /root/opencv/ /root/zstd-1.3.7/ /root/zstd-1.3.7.tar.gz
